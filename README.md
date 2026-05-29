@@ -7,14 +7,14 @@
 [![Platform](https://img.shields.io/badge/Platform-iOS%2026-000000?logo=apple)](https://www.apple.com/ios/)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-6.0-blue?logo=swift)](https://developer.apple.com/xcode/swiftui/)
 [![On-device ML](https://img.shields.io/badge/ML-Core%20ML%20(offline)-5B5BD6)](https://developer.apple.com/documentation/coreml)
-[![Research repo](https://img.shields.io/badge/Research-Nutrition5k-4285F4)](https://github.com/T0MYYY/Nutrition5k)
+[![Research repo](https://img.shields.io/badge/Research-Nutrition5k-4285F4)](https://github.com/T0MYYY/nutrition5k-calorie-estimation-adsp31018)
 [![Weights](https://img.shields.io/badge/%F0%9F%A4%97%20Weights-dpf--nutrition-FFD21E)](https://huggingface.co/T0MYYY/dpf-nutrition)
 
 </div>
 
 > ⚠️ **Research prototype — not a calibrated product.** The vision backbone has **not** been rigorously calibrated for iPhone cameras/sensors. The nutrition numbers it produces **have no reference value** and must not be used for medical, dietary, or clinical decisions. See [Limitations](#limitations).
 
-This is the **applied / deployment companion** to our research repository [**Nutrition5k — Vision-Based Food Calorie & Nutrition Estimation**](https://github.com/T0MYYY/Nutrition5k).
+This is the **applied / deployment companion** to our research repository [**Nutrition5k — Vision-Based Food Calorie & Nutrition Estimation**](https://github.com/T0MYYY/nutrition5k-calorie-estimation-adsp31018).
 
 > **Which model does CalBro use?** CalBro ships the **[DPF-Nutrition](https://arxiv.org/abs/2310.11702)** model — *Depth Prediction and Fusion* (Han et al., *Foods* 2023) — **not** the CVPR 2021 *Nutrition5k* architecture. DPF-Nutrition is a monocular RGB → predicted-depth → RGB-D-fusion regressor, which is exactly what suits a single-photo phone capture. Our research repo reproduces *both* the CVPR 2021 experiments and DPF-Nutrition; **CalBro deploys the DPF-Nutrition track.** We convert that trained model to Core ML and ship it inside a polished iOS app that runs entirely offline.
 
@@ -64,7 +64,7 @@ flowchart TD
 ```
 
 - **Stage 1 — Depth.** [Depth Anything V2 Small](https://github.com/DepthAnything/Depth-Anything-V2) converted to Core ML estimates a dense depth map from the single RGB frame (fixed **518×392** input). On LiDAR-equipped iPhones the hardware depth frame is also captured and exposed for a future bypass of this stage.
-- **Stage 2 — Nutrition.** Our **DPF-Nutrition** RGB-D regressor (trained in the [research repo](https://github.com/T0MYYY/Nutrition5k)) consumes ImageNet-normalized RGB + the depth map and regresses the five nutrition scalars.
+- **Stage 2 — Nutrition.** Our **DPF-Nutrition** RGB-D regressor (trained in the [research repo](https://github.com/T0MYYY/nutrition5k-calorie-estimation-adsp31018)) consumes ImageNet-normalized RGB + the depth map and regresses the five nutrition scalars.
 - Both models are bundled in the app and loaded with `MLModel(contentsOf:)`; the first launch compiles them (30–60 s) and caches the `.mlmodelc`.
 
 Implementation: `CalBro/Services/NutritionPredictionService.swift`, `ImagePreprocessing.swift`, `CameraCaptureController.swift`.
@@ -140,7 +140,7 @@ Capabilities used: **App Groups**, **HealthKit**, **Camera**, **User Notificatio
 
 ## Relationship to the research repo
 
-CalBro is the deployment track of **[T0MYYY/Nutrition5k](https://github.com/T0MYYY/Nutrition5k)** — where the models are trained and the CVPR 2021 paper is reproduced. See that repo for methodology, metrics, and the live web demo.
+CalBro is the deployment track of **[T0MYYY/nutrition5k-calorie-estimation-adsp31018](https://github.com/T0MYYY/nutrition5k-calorie-estimation-adsp31018)** — where the models are trained and the CVPR 2021 paper is reproduced. See that repo for methodology, metrics, and the live web demo.
 
 ## Citations
 

@@ -10,12 +10,12 @@
 
 原生 SwiftUI iPhone app(iOS 26),从一张俯拍食物照片 **完全离线** 估算卡路里与宏量营养素。
 部署 **DPF-Nutrition** 模型(Han et al., *Foods* 2023, arXiv:2310.11702 — 单目 RGB→预测深度→RGB-D 融合),
-**不是** CVPR 2021 Nutrition5k 架构。配套研究仓库:[T0MYYY/Nutrition5k](https://github.com/T0MYYY/Nutrition5k)。
+**不是** CVPR 2021 Nutrition5k 架构。配套研究仓库:[T0MYYY/nutrition5k-calorie-estimation-adsp31018](https://github.com/T0MYYY/nutrition5k-calorie-estimation-adsp31018)。
 
 - 2026-05-28 改名:CalBuddy → **CalBro**(避免与同名项目冲突)。
 - Project = `CalBro.xcodeproj`,scheme = `CalBro`,targets = `CalBro` / `CalBroTests` / `CalBroWidgetExtension`。
 - Bundle id:`com.wydfcc.calbro`;widget `com.wydfcc.calbro.CalBroWidget`;App Group `group.com.wydfcc.calbro`。
-- GitHub:https://github.com/T0MYYY/CalBro
+- GitHub:https://github.com/T0MYYY/calbro
 
 ---
 
