@@ -140,7 +140,7 @@ Capabilities used: **App Groups**, **HealthKit**, **Camera**, **User Notificatio
 
 ## Relationship to the research repo
 
-CalBro is the deployment track of **[T0MYYY/Nutrition5k](https://github.com/T0MYYY/Nutrition5k)** — where the models are trained and the CVPR 2021 paper is reproduced (including a fix for an 82 % train/test data leak). See that repo for methodology, metrics, and the live web demo.
+CalBro is the deployment track of **[T0MYYY/Nutrition5k](https://github.com/T0MYYY/Nutrition5k)** — where the models are trained and the CVPR 2021 paper is reproduced. See that repo for methodology, metrics, and the live web demo.
 
 ## Citations
 
