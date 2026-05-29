@@ -8,12 +8,15 @@
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-6.0-blue?logo=swift)](https://developer.apple.com/xcode/swiftui/)
 [![On-device ML](https://img.shields.io/badge/ML-Core%20ML%20(offline)-5B5BD6)](https://developer.apple.com/documentation/coreml)
 [![Research repo](https://img.shields.io/badge/Research-Nutrition5k-4285F4)](https://github.com/T0MYYY/Nutrition5k)
+[![Weights](https://img.shields.io/badge/%F0%9F%A4%97%20Weights-dpf--nutrition-FFD21E)](https://huggingface.co/T0MYYY/dpf-nutrition)
 
 </div>
 
 > ⚠️ **Research prototype — not a calibrated product.** The vision backbone has **not** been rigorously calibrated for iPhone cameras/sensors. The nutrition numbers it produces **have no reference value** and must not be used for medical, dietary, or clinical decisions. See [Limitations](#limitations).
 
-This is the **applied / deployment companion** to our research repository [**Nutrition5k — Vision-Based Food Calorie & Nutrition Estimation**](https://github.com/T0MYYY/Nutrition5k), where we reproduce the CVPR 2021 *Nutrition5k* paper and train the models. CalBro takes the trained **DPF-Nutrition (RGB + Depth)** model, converts it to Core ML, and ships it inside a polished iOS app that runs entirely offline.
+This is the **applied / deployment companion** to our research repository [**Nutrition5k — Vision-Based Food Calorie & Nutrition Estimation**](https://github.com/T0MYYY/Nutrition5k).
+
+> **Which model does CalBro use?** CalBro ships the **[DPF-Nutrition](https://arxiv.org/abs/2310.11702)** model — *Depth Prediction and Fusion* (Han et al., *Foods* 2023) — **not** the CVPR 2021 *Nutrition5k* architecture. DPF-Nutrition is a monocular RGB → predicted-depth → RGB-D-fusion regressor, which is exactly what suits a single-photo phone capture. Our research repo reproduces *both* the CVPR 2021 experiments and DPF-Nutrition; **CalBro deploys the DPF-Nutrition track.** We convert that trained model to Core ML and ship it inside a polished iOS app that runs entirely offline.
 
 ---
 
@@ -37,24 +40,27 @@ This is the **applied / deployment companion** to our research repository [**Nut
 
 ## The on-device ML pipeline
 
-```
-        ┌─────────────────────────────────────────────────────────────┐
-        │  Camera (overhead RGB)        LiDAR / dual-cam depth (opt.)   │
-        └───────────────┬─────────────────────────┬────────────────────┘
-                        │                          │
-                        ▼                          │
-        ┌───────────────────────────┐              │
-        │  Depth Anything V2 (Small) │  monocular   │   (LiDAR can bypass
-        │  Core ML · 518×392 input   │  depth       │    DA2 in future)
-        │  → GRAYSCALE_FLOAT16 depth │              │
-        └───────────────┬───────────┘              │
-                        │  depth                    │
-                        ▼                           ▼
-        ┌─────────────────────────────────────────────────────────────┐
-        │  DPF-Nutrition (RGB + Depth)  Core ML                        │
-        │  rgb [1,3,336,448] + depth [1,1,336,448]  →  nutrition [1,5] │
-        │  = [calories, mass, fat, carbs, protein]                     │
-        └─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    CAM["📷 Camera<br/>overhead RGB frame"]
+    LIDAR["📡 LiDAR / dual-cam depth<br/>Float32, metric (optional)"]
+
+    DA2["<b>Depth Anything V2 — Small</b><br/>Core ML · fixed 518×392 input<br/>→ GRAYSCALE_FLOAT16 depth map"]
+
+    DPF["<b>DPF-Nutrition (RGB + Depth)</b> · Core ML<br/>rgb [1,3,336,448] + depth [1,1,336,448]<br/>cross-modal attention + multi-scale fusion"]
+
+    OUT["🍽️ nutrition [1,5]<br/>calories · mass · fat · carbs · protein"]
+
+    CAM -->|"single RGB image"| DA2
+    DA2 -->|"predicted depth"| DPF
+    CAM -->|"ImageNet-normalized RGB"| DPF
+    LIDAR -.->|"future: bypass DA2,<br/>feed hardware depth directly"| DPF
+    DPF --> OUT
+
+    classDef model fill:#4338CA,stroke:#312E81,color:#fff;
+    classDef io fill:#EEF2FF,stroke:#818CF8,color:#1E1B4B;
+    class DA2,DPF model;
+    class CAM,LIDAR,OUT io;
 ```
 
 - **Stage 1 — Depth.** [Depth Anything V2 Small](https://github.com/DepthAnything/Depth-Anything-V2) converted to Core ML estimates a dense depth map from the single RGB frame (fixed **518×392** input). On LiDAR-equipped iPhones the hardware depth frame is also captured and exposed for a future bypass of this stage.
@@ -135,6 +141,36 @@ Capabilities used: **App Groups**, **HealthKit**, **Camera**, **User Notificatio
 ## Relationship to the research repo
 
 CalBro is the deployment track of **[T0MYYY/Nutrition5k](https://github.com/T0MYYY/Nutrition5k)** — where the models are trained and the CVPR 2021 paper is reproduced (including a fix for an 82 % train/test data leak). See that repo for methodology, metrics, and the live web demo.
+
+## Citations
+
+CalBro deploys the **DPF-Nutrition** model. If you use this work, please cite the original paper:
+
+```bibtex
+@article{han2023dpfnutrition,
+  title   = {DPF-Nutrition: Food Nutrition Estimation via Depth Prediction and Fusion},
+  author  = {Han, Yuzhe and Cheng, Qimin and Wu, Wenjin and Huang, Ziyang},
+  journal = {Foods},
+  volume  = {12},
+  number  = {23},
+  pages   = {4293},
+  year    = {2023},
+  doi     = {10.3390/foods12234293}
+}
+```
+
+The dataset and the original benchmark:
+
+```bibtex
+@inproceedings{thames2021nutrition5k,
+  title     = {Nutrition5k: Towards Automatic Nutritional Understanding of Generic Food},
+  author    = {Thames, Quin and Karpur, Arjun and Norris, Wade and Xia, Fangting and Panait, Liviu and Weyand, Tobias and Sim, Jack},
+  booktitle = {CVPR},
+  year      = {2021}
+}
+```
+
+Depth backbone: [Depth Anything V2](https://github.com/DepthAnything/Depth-Anything-V2) (Yang et al., 2024).
 
 ## License / disclaimer
 

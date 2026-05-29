@@ -14,6 +14,7 @@ CalBro/Resources/Models/
 
 ## How to obtain
 
+- **Quickest — Hugging Face:** [`T0MYYY/dpf-nutrition`](https://huggingface.co/T0MYYY/dpf-nutrition) hosts both Core ML packages under `coreml/` (`DPFNutritionRGBDepth.mlpackage`, `DepthAnythingV2SmallF16P6.mlpackage`).
 - **DPF-Nutrition** is trained in the research repo
   [T0MYYY/Nutrition5k](https://github.com/T0MYYY/Nutrition5k) and converted to Core ML with
   `tools/convert_dpf_nutrition_coreml.py` (run from the `nutrition5k` conda environment).
