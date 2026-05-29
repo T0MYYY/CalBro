@@ -1,0 +1,12 @@
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+*.xcuserdata/
+
+# Large Core ML model packages — a single weight file is ~173 MB, over GitHub's
+# 100 MB per-file limit. Obtain/generate them separately (see CalBro/Resources/Models/MODELS.md).
+*.mlpackage/
+
+# Prototype handoff archive (not source)
+Cal Buddy-handoff.zip

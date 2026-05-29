@@ -1,0 +1,69 @@
+name: CalBro
+options:
+  bundleIdPrefix: com.wydfcc
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+    GENERATE_INFOPLIST_FILE: YES
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+    TARGETED_DEVICE_FAMILY: "1"
+targets:
+  CalBro:
+    type: application
+    platform: iOS
+    supportedDestinations:
+      - iOS
+      - iOS Simulator
+    sources:
+      - path: CalBro
+        excludes:
+          - Resources
+      - path: CalBro/Resources/Models
+        buildPhase: resources
+        type: folder
+      - path: CalBro/Assets.xcassets
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wydfcc.calbro
+        DEVELOPMENT_TEAM: A9J5Z9ZASH
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_NSCameraUsageDescription: CalBro uses the camera to capture meal photos for nutrition logging.
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+  CalBroTests:
+    type: bundle.unit-test
+    platform: iOS
+    supportedDestinations:
+      - iOS
+      - iOS Simulator
+    sources:
+      - CalBroTests
+    dependencies:
+      - target: CalBro
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wydfcc.calbro.tests
+        DEVELOPMENT_TEAM: A9J5Z9ZASH
+        CODE_SIGN_STYLE: Automatic
+schemes:
+  CalBro:
+    build:
+      targets:
+        CalBro: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: false
+      targets:
+        - CalBroTests
